@@ -3,10 +3,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.File;
-import java.lang.reflect.Array;
-import java.text.DecimalFormat;
 
-//C:\Users\fatal\Desktop\NGATE 1C (1).rar
 public class Main {
     public static void main(String[] args)
             throws IOException{
@@ -16,37 +13,51 @@ public class Main {
         // Reading data using readLine
 
 
-        File new_File = new File(File_name);
+        TakeTreeOfObjects(File_name);
+    }
 
-        
-        if (new_File.exists() )
+    private static void TakeTreeOfObjects(String file_name) {
+        File new_File = new File(file_name);
+
+
+        if (new_File.exists() && new_File.isDirectory() )
         {
 
-            File Files_[] =  new_File.listFiles();
+            File[] Files_ =  new_File.listFiles();
+            assert Files_ != null;
+
             for (File File_ : Files_) {
-                String Line_Outoput = new String();
-                float  file_size_KB = File_.length();
-                file_size_KB = (file_size_KB / 1024);
-                String formattedDouble = new DecimalFormat("#0.00").format(file_size_KB);
-                Line_Outoput = File_.getName() + "/" +  formattedDouble + " kb";
-                if ((file_size_KB / 1024) > 1  )
+                float  file_size = File_.length();
+                file_size = (file_size / 1024);
+
+                TypeOfBitDepth[] types =  TypeOfBitDepth.values();
+
+                short index = 0;
+                TypeOfBitDepth bitDepth = types[index];
+                while ((file_size / 1024) > 1  )
                 {
-                    Float file_size_MB = file_size_KB / 1024;
-                    formattedDouble = new DecimalFormat("#0.00").format(file_size_MB);
-                    Line_Outoput = File_.getName() + "/" +  formattedDouble + " mb";
+                     file_size /= 1024;
+                     index++;
+                     bitDepth = types[index];
                 }
-                System.out.println(Line_Outoput);
+
+                File_OnDisk file_onDisk = new File_OnDisk(File_.getPath(),File_.getName(),file_size,bitDepth);
+                file_onDisk.setParentCatalog(File_.getParent());
+                System.out.println(file_onDisk.getName() + " " + file_onDisk.getSize() + " " + file_onDisk.getBitDepth());
+                String NameOfFile = File_ + ((File_.isDirectory())? "\\" : "" );
+                TakeTreeOfObjects(NameOfFile);
             }
 
         }
     }
+
     public static  String Return_FileName()
             throws IOException
     {
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(System.in));
 
-        String str = new String();
+        String str;
         System.out.println("File name");
         str = reader.readLine();
 
