@@ -1,12 +1,29 @@
+import java.io.File;
+
 public class File_OnDisk implements  fileCapability{
     private String path,name, parentCatalog;
     TypeOfBitDepth bitDepth;
     private  double size;
 
-    public  File_OnDisk(String path, String name, double size,TypeOfBitDepth bitDepth){
+    public  File_OnDisk(String path, String name, File File_){
         this.path = path;
         this.name = name;
-        this.size = size;
+
+        float  file_size = File_.length();
+        file_size = (file_size / 1024);
+
+        TypeOfBitDepth[] types =  TypeOfBitDepth.values();
+
+        short index = 0;
+        TypeOfBitDepth bitDepth = types[index];
+        while ((file_size / 1024) > 1  )
+        {
+            file_size /= 1024;
+            index++;
+            bitDepth = types[index];
+        }
+
+        this.size = file_size;
         this.bitDepth = bitDepth;
     }
 
